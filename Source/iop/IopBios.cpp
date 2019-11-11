@@ -1746,7 +1746,7 @@ uint32 CIopBios::DeleteSemaphore(uint32 semaphoreId)
 	auto semaphore = m_semaphores[semaphoreId];
 	if(!semaphore)
 	{
-		CLog::GetInstance().Print(LOGNAME, "%i: Warning, trying to access invalid semaphore with id %i.\r\n",
+		CLog::GetInstance().Warn(LOGNAME, "%i: Warning, trying to access invalid semaphore with id %i.\r\n",
 		                          m_currentThreadId.Get(), semaphoreId);
 		return KERNEL_RESULT_ERROR_UNKNOWN_SEMAID;
 	}
@@ -1776,7 +1776,7 @@ uint32 CIopBios::SignalSemaphore(uint32 semaphoreId, bool inInterrupt)
 	auto semaphore = m_semaphores[semaphoreId];
 	if(!semaphore)
 	{
-		CLog::GetInstance().Print(LOGNAME, "%d: Warning, trying to access invalid semaphore with id %d.\r\n",
+		CLog::GetInstance().Warn(LOGNAME, "%d: Warning, trying to access invalid semaphore with id %d.\r\n",
 		                          m_currentThreadId.Get(), semaphoreId);
 		return KERNEL_RESULT_ERROR_UNKNOWN_SEMAID;
 	}
@@ -1813,7 +1813,7 @@ uint32 CIopBios::WaitSemaphore(uint32 semaphoreId)
 	auto semaphore = m_semaphores[semaphoreId];
 	if(!semaphore)
 	{
-		CLog::GetInstance().Print(LOGNAME, "%d: Warning, trying to access invalid semaphore with id %d.\r\n",
+		CLog::GetInstance().Warn(LOGNAME, "%d: Warning, trying to access invalid semaphore with id %d.\r\n",
 		                          m_currentThreadId.Get(), semaphoreId);
 		return KERNEL_RESULT_ERROR_UNKNOWN_SEMAID;
 	}
@@ -1940,7 +1940,7 @@ uint32 CIopBios::DeleteEventFlag(uint32 eventId)
 	auto eventFlag = m_eventFlags[eventId];
 	if(!eventFlag)
 	{
-		CLog::GetInstance().Print(LOGNAME, "%d: Warning, trying to access invalid event flag with id %d.\r\n",
+		CLog::GetInstance().Warn(LOGNAME, "%d: Warning, trying to access invalid event flag with id %d.\r\n",
 		                          m_currentThreadId.Get(), eventId);
 		return KERNEL_RESULT_ERROR_UNKNOWN_EVFID;
 	}
