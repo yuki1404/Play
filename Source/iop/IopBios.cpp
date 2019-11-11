@@ -1575,7 +1575,7 @@ void CIopBios::LinkThread(uint32 threadId)
 			break;
 		}
 		auto currentThread = m_threads[(*nextThreadId)];
-		if(currentThread->priority > thread->priority)
+		if(currentThread->priority >= thread->priority)
 		{
 			thread->nextThreadId = (*nextThreadId);
 			(*nextThreadId) = threadId;
