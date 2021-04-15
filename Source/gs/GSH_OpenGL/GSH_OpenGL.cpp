@@ -313,6 +313,10 @@ void CGSH_OpenGL::CheckExtensions()
 		{
 			m_hasFramebufferFetchExtension = true;
 		}
+		else if(!strcmp(extensionName, "GL_ARM_shader_framebuffer_fetch_depth_stencil"))
+		{
+			m_hasFramebufferDepthFetchExtension = true;
+		}
 	}
 }
 
@@ -1125,6 +1129,7 @@ void CGSH_OpenGL::FillShaderCapsFromTest(SHADERCAPS& shaderCaps, const uint64& t
 		{
 			shaderCaps.hasAlphaTest = m_alphaTestingEnabled ? 1 : 0;
 			shaderCaps.alphaTestMethod = test.nAlphaMethod;
+			shaderCaps.alphaTestFailMethod = test.nAlphaFail;
 		}
 	}
 	else

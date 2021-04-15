@@ -137,14 +137,46 @@ Framework::OpenGl::CShader CGSH_OpenGL::GenerateFragmentShader(const SHADERCAPS&
 {
 	std::stringstream shaderBuilder;
 
+	bool useFramebufferFetch = false;
+	bool useFramebufferDepthFetch = false;
+
+	auto alphaTestFailMethod = static_cast<ALPHA_TEST_FAIL_METHOD>(caps.alphaTestFailMethod);
+	if(caps.hasAlphaTest)
+	{
+		switch(alphaTestFailMethod)
+		{
+		case ALPHA_TEST_FAIL_KEEP:
+		case ALPHA_TEST_FAIL_RGBONLY:
+		case ALPHA_TEST_FAIL_ZBONLY:
+			//TODO: Check how we can implement these correctly
+			alphaTestFailMethod = ALPHA_TEST_FAIL_KEEP;
+			break;
+		case ALPHA_TEST_FAIL_FBONLY:
+			if(!m_hasFramebufferDepthFetchExtension)
+			{
+				alphaTestFailMethod = ALPHA_TEST_FAIL_KEEP;
+			}
+			else
+			{
+				useFramebufferDepthFetch |= true;
+			}
+			break;
+		}
+	}
+
 	bool writeDestAlphaTest = caps.hasDestAlphaTest && m_hasFramebufferFetchExtension;
-	bool useFramebufferFetch = writeDestAlphaTest;
+	useFramebufferFetch |= writeDestAlphaTest;
 
 	shaderBuilder << GLSL_VERSION << std::endl;
 
 	if(useFramebufferFetch)
 	{
 		shaderBuilder << "#extension GL_EXT_shader_framebuffer_fetch : require" << std::endl;
+	}
+
+	if(useFramebufferDepthFetch)
+	{
+		shaderBuilder << "#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require" << std::endl;
 	}
 
 	shaderBuilder << "precision mediump float;" << std::endl;
@@ -232,6 +264,8 @@ Framework::OpenGl::CShader CGSH_OpenGL::GenerateFragmentShader(const SHADERCAPS&
 			break;
 		}
 	}
+
+	shaderBuilder << "	highp float fragDepth = v_depth;" << std::endl;
 
 	shaderBuilder << "	highp vec3 texCoord = v_texCoord;" << std::endl;
 	shaderBuilder << "	texCoord.st /= texCoord.p;" << std::endl;
@@ -348,7 +382,7 @@ Framework::OpenGl::CShader CGSH_OpenGL::GenerateFragmentShader(const SHADERCAPS&
 
 	if(caps.hasAlphaTest)
 	{
-		shaderBuilder << GenerateAlphaTestSection(static_cast<ALPHA_TEST_METHOD>(caps.alphaTestMethod));
+		shaderBuilder << GenerateAlphaTestSection(static_cast<ALPHA_TEST_METHOD>(caps.alphaTestMethod), alphaTestFailMethod);
 	}
 
 	if(caps.hasFog)
@@ -374,7 +408,7 @@ Framework::OpenGl::CShader CGSH_OpenGL::GenerateFragmentShader(const SHADERCAPS&
 		shaderBuilder << "	fragColor.xyz = vec3(1, 1, 1);" << std::endl;
 	}
 
-	shaderBuilder << "	gl_FragDepth = v_depth;" << std::endl;
+	shaderBuilder << "	gl_FragDepth = fragDepth;" << std::endl;
 
 	shaderBuilder << "}" << std::endl;
 
@@ -418,7 +452,7 @@ std::string CGSH_OpenGL::GenerateTexCoordClampingSection(TEXTURE_CLAMP_MODE clam
 	return shaderSource;
 }
 
-std::string CGSH_OpenGL::GenerateAlphaTestSection(ALPHA_TEST_METHOD testMethod)
+std::string CGSH_OpenGL::GenerateAlphaTestSection(ALPHA_TEST_METHOD testMethod, ALPHA_TEST_FAIL_METHOD testFailMethod)
 {
 	std::stringstream shaderBuilder;
 
@@ -456,10 +490,25 @@ std::string CGSH_OpenGL::GenerateAlphaTestSection(ALPHA_TEST_METHOD testMethod)
 		break;
 	}
 
+	const char* testFailOp = "	discard;";
+	switch(testFailMethod)
+	{
+	case CGSHandler::ALPHA_TEST_FAIL_KEEP:
+		testFailOp = "	discard;";
+		break;
+	case CGSHandler::ALPHA_TEST_FAIL_FBONLY:
+		//Depth is discarded
+		testFailOp = "	fragDepth = gl_LastFragDepthARM;";
+		break;
+	default:
+		assert(false);
+		break;
+	}
+
 	shaderBuilder << "uint textureColorAlphaInt = uint(textureColor.a * 255.0);" << std::endl;
 	shaderBuilder << test << std::endl;
 	shaderBuilder << "{" << std::endl;
-	shaderBuilder << "	discard;" << std::endl;
+	shaderBuilder << testFailOp << std::endl;
 	shaderBuilder << "}" << std::endl;
 
 	std::string shaderSource = shaderBuilder.str();
