@@ -859,7 +859,6 @@ void CPS2VM::EmuThread()
 #ifdef PROFILE
 							CProfilerZone profilerZone(m_gsSyncProfilerZone);
 #endif
-							m_ee->m_vpu1->GetVif().WaitComplete();
 							m_ee->m_gs->SetVBlank();
 						}
 
