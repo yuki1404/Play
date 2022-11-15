@@ -854,6 +854,7 @@ void CPS2VM::EmuThread()
 						m_ee->NotifyVBlankStart();
 						m_iop->NotifyVBlankStart();
 
+						m_ee->m_vpu1->GetVif().PauseProcessing();
 						if(m_ee->m_gs != NULL)
 						{
 #ifdef PROFILE
@@ -861,6 +862,7 @@ void CPS2VM::EmuThread()
 #endif
 							m_ee->m_gs->SetVBlank();
 						}
+						m_ee->m_vpu1->GetVif().ResumeProcessing();
 
 						if(m_pad != NULL)
 						{
