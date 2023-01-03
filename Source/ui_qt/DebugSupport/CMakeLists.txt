@@ -6,9 +6,6 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
 	set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 
-find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
-list(APPEND PLAYDEBUGSUPPORT_LIBS Qt5::Core Qt5::Widgets)
-
 set(CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_SOURCE_DIR}/../../../deps/Dependencies/cmake-modules
 	${CMAKE_MODULE_PATH}
@@ -151,11 +148,15 @@ set(QT_RESOURCES
 	../Qt_ui/resources.qrc
 )
 
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+list(APPEND PLAYDEBUGSUPPORT_LIBS Qt5::Core Qt5::Widgets)
+
 QT5_ADD_RESOURCES(QT_RES_SOURCES ${QT_RESOURCES})
 QT5_WRAP_UI(QT_DEBUGGER_UI_HEADERS ${QT_DEBUGGER_UI})
 QT5_WRAP_CPP(QT_DEBUGGER_MOC_SRCS ${QT_DEBUGGER_MOC_HEADERS})
 
 add_library(PlayDebugSupport STATIC ${SRC_FILES} ${QT_DEBUGGER_UI_HEADERS} ${QT_DEBUGGER_MOC_SRCS} ${QT_RES_SOURCES})
-target_link_libraries(PlayDebugSupport PlayCore ${PLAYDEBUGSUPPORT_LIBS} Framework_OpenGl Qt5::Core Qt5::Widgets)
+target_link_libraries(PlayDebugSupport PlayCore ${PLAYDEBUGSUPPORT_LIBS})
 target_compile_definitions(PlayDebugSupport PRIVATE NOMINMAX ${PLAYDEBUGSUPPORT_DEFS})
-target_include_directories(PlayDebugSupport PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ../../${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(PlayDebugSupport PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(PlayDebugSupport PRIVATE ../../${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
