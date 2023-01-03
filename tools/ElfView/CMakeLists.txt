@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(ElfView)
+set(PROJECT_LIBS)
 
 if(NOT TARGET PlayCore)
     add_subdirectory(

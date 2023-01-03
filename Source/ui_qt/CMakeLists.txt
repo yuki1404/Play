@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(PlayUI)
+set(PROJECT_LIBS)
 
 add_definitions(-DPLAY_VERSION="${PROJECT_Version}")
 

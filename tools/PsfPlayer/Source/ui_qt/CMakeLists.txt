@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(PsfPlayer)
+set(PROJECT_LIBS)
 
 if(NOT TARGET PsfCore)
 	add_subdirectory(

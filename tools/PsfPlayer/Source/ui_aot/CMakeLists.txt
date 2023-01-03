@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(PsfAot)
+set(PROJECT_LIBS)
 
 if(NOT TARGET PsfCore)
 	add_subdirectory(

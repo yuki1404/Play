@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(Play_Libretro_Core)
+set(PROJECT_LIBS)
 
 add_definitions(-DPLAY_VERSION="${PROJECT_Version}")
 

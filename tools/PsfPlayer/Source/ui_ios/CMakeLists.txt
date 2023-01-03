@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(PsfPlayer)
+set(PROJECT_LIBS)
 set(PSF_PROJECT_NAME "PsfPlayer")
 set(PSF_PROJECT_VERSION "1.05")
 

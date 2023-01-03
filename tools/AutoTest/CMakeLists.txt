@@ -7,6 +7,8 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(AutoTest)
+set(PROJECT_LIBS)
+
 if (NOT TARGET PlayCore)
 	add_subdirectory(
 		${CMAKE_CURRENT_SOURCE_DIR}/../../Source/

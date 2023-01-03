@@ -8,6 +8,7 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(SH_OpenAL)
+set(PROJECT_LIBS)
 
 if(NOT TARGET Framework)
 	add_subdirectory(

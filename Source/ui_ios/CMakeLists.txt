@@ -7,6 +7,7 @@ set(CMAKE_MODULE_PATH
 include(Header)
 
 project(PlayUI LANGUAGES C Swift)
+set(PROJECT_LIBS)
 
 set(USE_GSH_VULKAN OFF)
 find_package(Vulkan)
