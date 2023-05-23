@@ -32,6 +32,9 @@ MainWindow::MainWindow(QWidget* parent)
 #endif
 	m_OnNewFrameConnection = m_virtualMachine->OnNewFrame.Connect([&]() { OnNewFrame(); });
 
+	m_debugger = std::make_unique<DebuggerWindow>(*m_virtualMachine);
+	m_debugger->showMaximized();
+
 	model.setHeaderData(0, Qt::Orientation::Horizontal, QVariant("Game"), Qt::DisplayRole);
 	model.setHeaderData(1, Qt::Orientation::Horizontal, QVariant("Title"), Qt::DisplayRole);
 	model.setHeaderData(2, Qt::Orientation::Horizontal, QVariant("Length"), Qt::DisplayRole);
@@ -82,6 +85,7 @@ MainWindow::~MainWindow()
 {
 	m_running = false;
 	if(m_thread.joinable()) m_thread.join();
+	m_debugger.reset();
 	if(m_virtualMachine != nullptr)
 	{
 		m_virtualMachine->Pause();
@@ -190,15 +194,49 @@ void MainWindow::on_tableView_customContextMenuRequested(const QPoint& pos)
 	}
 }
 
+void MainWindow::UnloadCurrentTrack()
+{
+	if(m_currentindex == -1)
+	{
+		return;
+	}
+	m_virtualMachine->Pause();
+#ifdef DEBUGGER_INCLUDED
+	auto item = model.at(m_currentindex);
+	auto itemPath = fs::path(item->path);
+	auto tagPackageName = itemPath.stem().string();
+	m_virtualMachine->SaveDebugTags(tagPackageName.c_str());
+#endif
+	m_currentindex = -1;
+}
+
 void MainWindow::PlayTrackIndex(int index)
 {
-	m_virtualMachine->Pause();
+	UnloadCurrentTrack();
 	m_virtualMachine->Reset();
 	m_currentindex = index;
+
 	CPsfBase::TagMap tags;
-	CPsfLoader::LoadPsf(*m_virtualMachine, model.at(m_currentindex)->path, "", &tags);
+	auto item = model.at(m_currentindex);
+	auto itemPath = fs::path(item->path);
+	CPsfLoader::LoadPsf(*m_virtualMachine, itemPath.native(), "", &tags);
 	UpdateTrackDetails(tags);
+
+#ifdef DEBUGGER_INCLUDED
+	auto tagPackageName = itemPath.stem().string();
+	m_virtualMachine->LoadDebugTags(tagPackageName.c_str());
+	m_debugger->Reset();
+#else
 	m_virtualMachine->Resume();
+#endif
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+	UnloadCurrentTrack();
+#ifdef DEBUGGER_INCLUDED
+	m_debugger->close();
+#endif
 }
 
 void MainWindow::on_tableView_doubleClicked(const QModelIndex& index)

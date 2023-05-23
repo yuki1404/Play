@@ -5,6 +5,7 @@
 #include "PsfBase.h"
 #include "PlaylistItem.h"
 #include "playlistmodel.h"
+#include "debuggerwindow.h"
 #include <thread>
 #include "filesystem_def.h"
 
@@ -28,8 +29,11 @@ private:
 	void UpdateTrackDetails(CPsfBase::TagMap&);
 	void OnNewFrame();
 
+	void UnloadCurrentTrack();
 	void PlayTrackIndex(int index);
 	void DeleteTrackIndex(int index);
+
+	void closeEvent(QCloseEvent*) override;
 
 	Ui::MainWindow* ui;
 	CPsfVm* m_virtualMachine;
@@ -43,6 +47,8 @@ private:
 	std::thread m_thread;
 	std::atomic<bool> m_running;
 	std::string m_path;
+
+	std::unique_ptr<DebuggerWindow> m_debugger;
 
 	Framework::CSignal<void()>::Connection m_OnNewFrameConnection;
 
