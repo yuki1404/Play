@@ -33,7 +33,6 @@ MainWindow::MainWindow(QWidget* parent)
 	m_OnNewFrameConnection = m_virtualMachine->OnNewFrame.Connect([&]() { OnNewFrame(); });
 
 	m_debugger = std::make_unique<DebuggerWindow>(*m_virtualMachine);
-	m_debugger->showMaximized();
 
 	model.setHeaderData(0, Qt::Orientation::Horizontal, QVariant("Game"), Qt::DisplayRole);
 	model.setHeaderData(1, Qt::Orientation::Horizontal, QVariant("Title"), Qt::DisplayRole);
@@ -137,6 +136,13 @@ void MainWindow::AddFileToPlaylist(const fs::path& filePath)
 		messageBox.critical(0, "Error", e.what());
 		messageBox.show();
 	}
+}
+
+void MainWindow::ShowDebugger()
+{
+	m_debugger->showMaximized();
+	m_debugger->raise();
+	m_debugger->activateWindow();
 }
 
 void MainWindow::UpdateTrackDetails(CPsfBase::TagMap& tags)

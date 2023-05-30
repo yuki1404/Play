@@ -23,6 +23,7 @@ public:
 	~MainWindow();
 
 	void AddFileToPlaylist(const fs::path&);
+	void ShowDebugger();
 
 private:
 	void UiUpdateLoop();
