@@ -61,7 +61,7 @@ void MainWindow::UiUpdateLoop()
 			m_frames = 0;
 			on_nextButton_clicked();
 		}
-		else if(m_frames >= m_fadePosition)
+		else if((m_frames >= m_fadePosition) && (m_trackLength != m_fadePosition))
 		{
 			float currentRatio = static_cast<float>(m_trackLength - m_fadePosition) / static_cast<float>(m_trackLength - m_frames);
 			float currentVolume = (1 / currentRatio) * m_volumeAdjust;
