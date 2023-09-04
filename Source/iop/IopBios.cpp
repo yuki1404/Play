@@ -266,7 +266,9 @@ void CIopBios::Reset(uint32 ramSize, const Iop::SifManPtr& sifMan)
 		RegisterModule(m_powerOff);
 	}
 	{
-		RegisterModule(std::make_shared<Iop::Namco::CSys147>(*m_sifMan));
+		auto s147 = std::make_shared<Iop::Namco::CSys147>(*m_sifMan);
+		RegisterModule(s147);
+		RegisterHleModuleReplacement("S147LINK", s147);
 	}
 	RegisterModule(std::make_shared<Iop::CIomanX>(*m_ioman));
 	//RegisterModule(std::make_shared<Iop::CNaplink>(*m_sifMan, *m_ioman));
