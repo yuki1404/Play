@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         build-type: ['Visual Studio 16 2019']
-        target-platform: ['x64', 'Win32']
+        target-platform: ['x64']
         include: 
           - target-platform: 'x64'
             arch-type: 'x86_64'
