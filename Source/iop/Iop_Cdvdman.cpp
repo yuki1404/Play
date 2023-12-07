@@ -50,7 +50,7 @@ using namespace Iop;
 
 CCdvdman::CCdvdman(CIopBios& bios, uint8* ram)
     : m_bios(bios)
-    ， m_ram(ram)
+    , m_ram(ram)
 {
 }
 
@@ -155,7 +155,7 @@ uint32 CCdvdman::CdLayerSearchFileDirect(COpticalMedia* opticalMedia, FILEINFO* 
 		while(slashPos != std::string::npos)
 		{
 			fixedPath[slashPos] = '/';
-			slashPos = fixedPath.find('\\'， slashPos + 1);
+			slashPos = fixedPath.find('\\', slashPos + 1);
 		}
 	}
 
@@ -163,11 +163,11 @@ uint32 CCdvdman::CdLayerSearchFileDirect(COpticalMedia* opticalMedia, FILEINFO* 
 	//Don't know if this is valid behavior but shouldn't hurt compatibility. This was done for Sengoku Musou 2.
 	while(1)
 	{
-		auto semColCount = std::count(fixedPath.begin()， fixedPath.end()， ';');
+		auto semColCount = std::count(fixedPath.begin(), fixedPath.end(), ';');
 		if(semColCount <= 1) break;
 		auto semColPos = fixedPath.rfind(';');
 		assert(semColPos != std::string::npos);
-		fixedPath = std::string(fixedPath.begin()， fixedPath.begin() + semColPos);
+		fixedPath = std::string(fixedPath.begin(), fixedPath.begin() + semColPos);
 	}
 
 	ISO9660::CDirectoryRecord record;
